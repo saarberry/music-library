@@ -1,56 +1,106 @@
-# For more information: https://laravel.com/docs/sail
 version: '3'
-services:
-    laravel.test:
-        build:
-            context: ./vendor/laravel/sail/runtimes/8.0
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP}'
-        image: sail-8.0/app
-        ports:
-            - '${APP_PORT:-80}:80'
-        environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - sail
-        depends_on:
-            - mysql
-            - redis
-    mysql:
-        image: 'mysql:8.0'
-        ports:
-            - '${FORWARD_DB_PORT:-3306}:3306'
-        environment:
-            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
-            MYSQL_DATABASE: '${DB_DATABASE}'
-            MYSQL_USER: '${DB_USERNAME}'
-            MYSQL_PASSWORD: '${DB_PASSWORD}'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-        volumes:
-            - 'sailmysql:/var/lib/mysql'
-        networks:
-            - sail
-        healthcheck:
-          test: ["CMD", "mysqladmin", "ping"]
-    redis:
-        image: 'redis:alpine'
-        ports:
-            - '${FORWARD_REDIS_PORT:-6379}:6379'
-        volumes:
-            - 'sailredis:/data'
-        networks:
-            - sail
-        healthcheck:
-          test: ["CMD", "redis-cli", "ping"]
+
 networks:
-    sail:
-        driver: bridge
-volumes:
-    sailmysql:
-        driver: local
-    sailredis:
-        driver: local
+    laravel:
+
+services:
+    dnsmasq_laravel:
+        restart: always
+        image: strm/dnsmasq
+        container_name: dnsmasq_laravel
+        volumes:
+            - ./docker/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+        ports:
+            - "53:53/udp"
+        cap_add:
+            - NET_ADMIN
+        networks:
+            - laravel
+
+    nginx_laravel:
+        build:
+            context: .
+            dockerfile: ./docker/nginx.dockerfile
+        container_name: nginx_laravel
+        env_file:
+            - ./docker/.env
+        ports:
+            - "80:80"
+        volumes:
+            - ./:/var/www/html:delegated
+            - ./docker/nginx/templates:/etc/nginx/templates
+        depends_on:
+            - php_laravel
+            - mysql_laravel
+        networks:
+            - laravel
+
+    mysql_laravel:
+        image: mysql:5.7.16
+        container_name: mysql_laravel
+        env_file:
+            - ./docker/.env
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./docker/mysql:/var/lib/mysql:delegated
+        environment:
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql_laravel
+        networks:
+            - laravel
+
+    php_laravel:
+        build:
+            context: .
+            dockerfile: ./docker/php.dockerfile
+        container_name: php_laravel
+        volumes:
+            - ./:/var/www/html:delegated
+        ports:
+            - "9000:9000"
+        networks:
+            - laravel
+
+    composer:
+        build:
+            context: .
+            dockerfile: ./docker/composer.dockerfile
+        container_name: composer
+        volumes:
+            - ./:/var/www/html:delegated
+        working_dir: /var/www/html
+        depends_on:
+            - php_laravel
+        user: laravel
+        entrypoint: ['composer', '--ignore-platform-reqs']
+        networks:
+            - laravel
+
+    npm:
+        image: node:14.10
+        env_file:
+            - ./docker/.env
+        container_name: npm
+        volumes:
+            - ./:/var/www/html:delegated
+        working_dir: /var/www/html
+        entrypoint: ['npm']
+        networks:
+            - laravel
+
+    artisan:
+        build:
+            context: .
+            dockerfile: ./docker/php.dockerfile
+        container_name: artisan
+        volumes:
+            - ./:/var/www/html:delegated
+        depends_on:
+            - mysql_laravel
+        working_dir: /var/www/html
+        entrypoint: ['php', '/var/www/html/artisan']
+        networks:
+            - laravel
