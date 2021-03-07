@@ -2,30 +2,62 @@
 
 namespace App\Services;
 
+use App\Exceptions\LastFmApiException;
+use App\Exceptions\LastFmApiRateLimitException;
+use \Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class LastFmApi {
+class LastFmApi
+{
 
     protected $url = "http://ws.audioscrobbler.com/2.0/";
 
-    protected function request($params = [])
+    /**
+     * Run API request.
+     *
+     * @param array $params
+     * @throws LastFmApiRateLimitException
+     * @throws LastFmApiException
+     * @return Response
+     */
+    protected function request($params = []): Response
     {
-        return Http::get(
+        $response = Http::get(
             $this->url,
             array_merge($params, [
                 'api_key' => config('services.lastfm.key'),
                 'format' => 'json',
             ])
         );
+
+        if ($response->failed()) {
+            $data = $response->json();
+            if ($data['error'] == 29) {
+                throw new LastFmApiRateLimitException();
+            }
+
+            throw new LastFmApiException();
+        }
+
+        return $response;
     }
 
-    public function searchAlbums($query)
+    /**
+     * Search albums by query.
+     *
+     * @param string $query
+     * @return Collection
+     */
+    public function searchAlbums(string $query): Collection
     {
-        return $this->request([
+        $response = $this->request([
             'method' => 'album.search',
             'album' => $query,
             'limit' => 5,
         ]);
-    }
 
+        $data = $response->json();
+        return collect($data['results']['albummatches']['album']);
+    }
 }

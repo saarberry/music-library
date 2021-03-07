@@ -39,7 +39,7 @@ class LastfmSearchCommand extends Command
      */
     public function handle(LastFmApi $lastfm)
     {
-        $response = $lastfm->searchAlbums($this->argument('query'));
-        dump($response->json());
+        $albums = $lastfm->searchAlbums($this->argument('query'));
+        dump($albums);
     }
 }
