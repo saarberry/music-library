@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Exceptions\LastFmApiException;
 use App\Exceptions\LastFmApiRateLimitException;
+use App\Models\Album;
 use App\Services\LastFmApi;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -49,5 +50,8 @@ class LastFmApiTest extends TestCase
         });
 
         $this->assertEquals($albums->count(), 5);
+        foreach ($albums as $album) {
+            $this->assertTrue($album instanceof Album);
+        }
     }
 }

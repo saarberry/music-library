@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\LastFmApiException;
 use App\Exceptions\LastFmApiRateLimitException;
+use App\Models\Album;
 use \Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -58,6 +59,13 @@ class LastFmApi
         ]);
 
         $data = $response->json();
-        return collect($data['results']['albummatches']['album']);
+        return collect($data['results']['albummatches']['album'])
+            ->map(function ($album) {
+                $result = new Album();
+                $result->title = $album['name'];
+                $result->artist = $album['artist'];
+                $result->image = $album['image'][count($album['image']) - 1]['#text'];
+                return $result;
+            });
     }
 }
