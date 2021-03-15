@@ -1,4 +1,5 @@
 <template>
+    <h1>Music Library</h1>
     <search />
 </template>
 

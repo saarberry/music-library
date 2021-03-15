@@ -80,7 +80,7 @@ services:
             - laravel
 
     npm:
-        image: node:14.10
+        image: node:14.16
         env_file:
             - ./docker/.env
         container_name: npm
@@ -88,6 +88,20 @@ services:
             - ./:/var/www/html:delegated
         working_dir: /var/www/html
         entrypoint: ['npm']
+        networks:
+            - laravel
+
+    cypress:
+        image: "cypress/included:6.6.0"
+        container_name: cypress
+        depends_on:
+            - nginx_laravel
+        environment:
+            - CYPRESS_baseUrl=http://host.docker.internal
+        working_dir: /e2e
+        # entrypoint: ['cypress']
+        volumes:
+            - ./:/e2e
         networks:
             - laravel
 
