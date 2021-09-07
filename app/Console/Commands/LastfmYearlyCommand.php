@@ -2,25 +2,24 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use App\Services\LastFmApi;
+use Illuminate\Console\Command;
 
-class LastfmSearchCommand extends Command
+class LastfmYearlyCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'lastfm:search {query}';
+    protected $signature = 'lastfm:yearly {user} {--y|year=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Search LastFM for stuff.';
+    protected $description = 'List yearly albums for the given user.';
 
     /**
      * Create a new command instance.
@@ -39,13 +38,13 @@ class LastfmSearchCommand extends Command
      */
     public function handle(LastFmApi $lastfm)
     {
-        $albums = $lastfm->searchAlbums($this->argument('query'));
-        $albums = $albums->map(fn ($album) => ['name' => $album['name'], 'artist' => $album['artist']]);
+        $year = (int) $this->option('year');
 
-        $this->table(
-            ["Name", "Artist"],
-            $albums->toArray()
-        );
+        if (!$year) {
+            $year = now()->year;
+        }
+
+        dump($lastfm->yearlyAlbumsForUser($this->argument('user'), $year));
 
         return 0;
     }
