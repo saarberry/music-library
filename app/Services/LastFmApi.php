@@ -6,7 +6,7 @@ use App\Exceptions\LastFmApiException;
 use App\Exceptions\LastFmApiRateLimitException;
 use App\Models\Album;
 use Exception;
-use \Illuminate\Http\Client\Response;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;

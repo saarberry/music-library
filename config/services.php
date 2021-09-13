@@ -33,6 +33,10 @@ return [
     'lastfm' => [
         'key' => env('LASTFM_API_KEY'),
         'secret' => env('LASTFM_API_SECRET'),
-    ]
+    ],
+
+    'discogs' => [
+        'token' => env('DISCOGS_API_TOKEN'),
+    ],
 
 ];
