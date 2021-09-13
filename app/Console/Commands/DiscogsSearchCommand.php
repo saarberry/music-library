@@ -39,7 +39,13 @@ class DiscogsSearchCommand extends Command
     public function handle(DiscogsApi $discogs)
     {
         $albums = $discogs->searchReleases($this->option('artist'), $this->option('title'));
-        $albums = $albums->map(fn ($album) => ['id' => $album['id'], 'title' => $album['title'], 'year' => $album['year']]);
+        $albums = $albums->map(function ($album) {
+            return [
+                'id' => $album['id'],
+                'title' => $album['title'],
+                'year' => $album['year'],
+            ];
+        });
 
         $this->table(
             ["ID", "Title", "Year"],

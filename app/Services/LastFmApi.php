@@ -6,6 +6,7 @@ use App\Exceptions\LastFmApiException;
 use App\Exceptions\LastFmApiRateLimitException;
 use App\Models\Album;
 use Exception;
+use Generator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -71,26 +72,18 @@ class LastFmApi
             });
     }
 
-    public function yearlyAlbumsForUser(string $user, int $year): Collection
+    /**
+     * Retrieve recent tracks for the given user.
+     *
+     * @param string $user
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @return Generator
+     */
+    public function recentTracks(string $user, ?Carbon $from = null, ?Carbon $to = null): Generator
     {
-        $from = Carbon::now()->year($year)->startOfYear()->timestamp;
-        $to = Carbon::now()->year($year)->endOfYear()->timestamp;
-
-        // $response = $this->request([
-        //     'method' => 'album.getinfo',
-        //     'user' => $user,
-        //     'artist' => 'Turnstile',
-        //     'album' => 'Glow On',
-        // ]);
-        // $result = $response->json();
-        // $response = Http::get($result['album']['url']);
-        // preg_match(
-        //     '/\<dd class\=\"catalogue-metadata-description\"\>(\d{1,2} [a-zA-Z]+ \d{4})\<\/dd\>/',
-        //     $response->body(),
-        //     $matches
-        // );
-        // dump(Carbon::parse($matches[1])->year);
-        // return collect();
+        if (!$from) $from = now()->startOfDay();
+        if (!$to) $to = now()->endOfDay();
 
         $payload = [
             'method' => 'user.getrecenttracks',
@@ -99,88 +92,35 @@ class LastFmApi
             'from' => $from,
             'to' => $to,
         ];
-        $initialResponse = $this->request($payload);
-        $initialResult = $initialResponse->json();
 
-        $pages = (int) $initialResult['recenttracks']['@attr']['totalPages'];
-        $page = (int) $initialResult['recenttracks']['@attr']['page'];
+        $response = $this->request($payload);
+        $result = $response->json();
 
-        $albums = collect();
+        // Yield the meta info for an overview of how long this will take.
+        $meta = collect([
+            "page" => (int) $result['recenttracks']['@attr']['page'],
+            "perPage" => (int) $result['recenttracks']['@attr']['perPage'],
+            "user" => $result['recenttracks']['@attr']['user'],
+            "total" => (int) $result['recenttracks']['@attr']['total'],
+            "totalPages" => (int) $result['recenttracks']['@attr']['totalPages'],
+        ]);
+        yield "meta" => $meta;
+
+        $pages = (int) $result['recenttracks']['@attr']['totalPages'];
+        $page = (int) $result['recenttracks']['@attr']['page'];
+
         while ($page <= $pages) {
-            $response = $this->request(
-                array_merge($payload, ['page' => $page])
-            );
+            $response = $this->request(array_merge($payload, ['page' => $page]));
             $result = $response->json();
 
-            foreach ($result['recenttracks']['track'] as $track) {
-                $artist = $track['artist']['#text'];
-                $album = $track['album']['#text'];
-                $mbid = $track['album']['mbid'];
-                if (
-                    !$albums->contains('mbid', $mbid) ||
-                    !$albums->contains(function ($value, $key) use ($artist, $album) {
-                        return "{$value['artist']} {$value['album']}" === "$artist $album";
-                    })
-                ) {
-                    $albums->push([
-                        'artist' => $track['artist']['#text'],
-                        'album' => $track['album']['#text'],
-                        'mbid' => $track['album']['mbid'],
-                    ]);
-                }
-            }
-
-            dump("Fetching scrobbles - page {$page} of {$pages}.");
+            yield $page => collect(array_map(function ($track) {
+                return [
+                    'artist' => $track['artist']['#text'],
+                    'title' => $track['album']['#text'],
+                    'mbid' => $track['album']['mbid'],
+                ];
+            }, $response['recenttracks']['track']));
             $page++;
         }
-
-        $albums = $albums
-            ->filter(fn ($album) => $album['mbid'] || ($album['artist'] && $album['album']))
-            ->map(function ($album) use ($user, $year) {
-                $payload = [
-                    'method' => 'album.getinfo',
-                    'user' => $user,
-                ];
-                if ($album['mbid']) {
-                    $payload['mbid'] = $album['mbid'];
-                } else {
-                    $payload['artist'] = $album['artist'];
-                    $payload['album'] = $album['album'];
-                }
-
-                dump("Fetching {$album['artist']} - {$album['album']}");
-                $response = $this->request($payload);
-                $result = $response->json();
-
-                try {
-                    $response = Http::get($result['album']['url']);
-                    preg_match(
-                        '/\<dd class\=\"catalogue-metadata-description\"\>(.*\d{4})\<\/dd\>/',
-                        $response->body(),
-                        $matches
-                    );
-                    $releaseDate = $matches[1];
-                } catch (Exception $e) {
-                    return null;
-                }
-
-                if (
-                    Carbon::parse($releaseDate)->year !== $year ||
-                    (strlen($releaseDate) == 4 && (int) $releaseDate !== $year)
-                ) {
-                    return null;
-                }
-
-                return [
-                    'artist' => $result['album']['artist'],
-                    'album' => $result['album']['name'],
-                    'userplaycount' => $result['album']['userplaycount'],
-                    'releasedate' => $releaseDate,
-                ];
-            })
-            ->filter(fn ($album) => !!$album)
-            ->sortByDesc('userplaycount');
-
-        return $albums;
     }
 }

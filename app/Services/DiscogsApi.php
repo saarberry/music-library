@@ -38,6 +38,7 @@ class DiscogsApi
                 "User-Agent" => $this->userAgent(),
                 "Authorization" => "Discogs token=" . config('services.discogs.token')
             ])
+            ->retry(10, 10000)
             ->get($this->url . $endpoint, $params);
     }
 
