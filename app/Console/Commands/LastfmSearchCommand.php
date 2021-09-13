@@ -46,5 +46,7 @@ class LastfmSearchCommand extends Command
             ["Name", "Artist"],
             $albums->toArray()
         );
+
+        return 0;
     }
 }

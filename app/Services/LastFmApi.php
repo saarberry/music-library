@@ -5,7 +5,10 @@ namespace App\Services;
 use App\Exceptions\LastFmApiException;
 use App\Exceptions\LastFmApiRateLimitException;
 use App\Models\Album;
-use \Illuminate\Http\Client\Response;
+use Exception;
+use Generator;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -67,5 +70,57 @@ class LastFmApi
                 $result->image = $album['image'][count($album['image']) - 1]['#text'];
                 return $result;
             });
+    }
+
+    /**
+     * Retrieve recent tracks for the given user.
+     *
+     * @param string $user
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @return Generator
+     */
+    public function recentTracks(string $user, ?Carbon $from = null, ?Carbon $to = null): Generator
+    {
+        if (!$from) $from = now()->startOfDay();
+        if (!$to) $to = now()->endOfDay();
+
+        $payload = [
+            'method' => 'user.getrecenttracks',
+            'user' => $user,
+            'limit' => 200,
+            'from' => $from,
+            'to' => $to,
+        ];
+
+        $response = $this->request($payload);
+        $result = $response->json();
+
+        // Yield the meta info for an overview of how long this will take.
+        $meta = collect([
+            "page" => (int) $result['recenttracks']['@attr']['page'],
+            "perPage" => (int) $result['recenttracks']['@attr']['perPage'],
+            "user" => $result['recenttracks']['@attr']['user'],
+            "total" => (int) $result['recenttracks']['@attr']['total'],
+            "totalPages" => (int) $result['recenttracks']['@attr']['totalPages'],
+        ]);
+        yield "meta" => $meta;
+
+        $pages = (int) $result['recenttracks']['@attr']['totalPages'];
+        $page = (int) $result['recenttracks']['@attr']['page'];
+
+        while ($page <= $pages) {
+            $response = $this->request(array_merge($payload, ['page' => $page]));
+            $result = $response->json();
+
+            yield $page => collect(array_map(function ($track) {
+                return [
+                    'artist' => $track['artist']['#text'],
+                    'title' => $track['album']['#text'],
+                    'mbid' => $track['album']['mbid'],
+                ];
+            }, $response['recenttracks']['track']));
+            $page++;
+        }
     }
 }
