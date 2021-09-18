@@ -6,7 +6,8 @@
 // `--'    `---'  `----' `--''--' `---'  `--`--'  `--'  `--' `---' `--''--'     /  /          `------' `--'   `--' `---'
 //                                                                             `--'
 @mixin main-grid {
-    display: grid;
-    grid-template-columns: 7rem repeat(12, 1fr) 7rem;
     column-gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    margin: 0 7rem;
 }
