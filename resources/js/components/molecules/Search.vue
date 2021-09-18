@@ -5,11 +5,12 @@
             placeholder="Album, artist or songname..."
             v-model="query"
         />
-        <ul class="Search__Results">
+        <SearchIcon />
+        <!-- <ul class="Search__Results">
             <li v-for="(album, i) in albums" :key="i">
                 {{ album.title }} by {{ album.artist }}
             </li>
-        </ul>
+        </ul> -->
     </div>
 </template>
 
@@ -17,8 +18,10 @@
 import { ref, watch } from "vue";
 import { debounce } from "debounce";
 import axios from "axios";
+import SearchIcon from "@/components/atoms/icons/Search.vue";
 
 export default {
+    components: { SearchIcon },
     setup() {
         let query = ref("");
         let albums = ref([]);
