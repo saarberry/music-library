@@ -1,0 +1,36 @@
+//                                                                 ,--.
+// ,--.   ,--.       ,--.                     ,--.                /  /      ,---.                              ,--.
+// |   `.'   | ,---. |  | ,---.  ,---.,--.,--.|  | ,---.         /  /      '   .-'  ,---.  ,--,--.,--.--. ,---.|  ,---.
+// |  |'.'|  || .-. ||  || .-. :| .--'|  ||  ||  || .-. :       /  /       `.  `-. | .-. :' ,-.  ||  .--'| .--'|  .-.  |
+// |  |   |  |' '-' '|  |\   --.\ `--.'  ''  '|  |\   --.      /  /        .-'    |\   --.\ '-'  ||  |   \ `--.|  | |  |
+// `--'   `--' `---' `--' `----' `---' `----' `--' `----'     /  /         `-----'  `----' `--`--'`--'    `---'`--' `--'
+//                                                           `--'
+@use "sass:map";
+
+.Search {
+    .Search__Input {
+        @include serif;
+        @include transition-focus(border-color);
+        border-radius: .5rem;
+        border: .25rem solid map.get($colors, "red-20");
+        color: map.get($colors, "neutral-100");
+        font-size: 2.5rem;
+        height: 6rem;
+        line-height: 3rem;
+        outline: none;
+        padding: 1.5rem 1rem 1.5rem 2rem;
+        width: 100%;
+
+        &::placeholder {
+            color: map.get($colors, "neutral-30");
+        }
+
+        &:hover {
+            border-color: map.get($colors, "red-30");
+        }
+
+        &:focus, &:active {
+            border-color: map.get($colors, "red-40");
+        }
+    }
+}

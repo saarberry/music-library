@@ -1,7 +1,11 @@
 <template>
     <div class="Search">
-        <input v-model="query" />
-        <ul>
+        <input
+            class="Search__Input"
+            placeholder="Album, artist or songname..."
+            v-model="query"
+        />
+        <ul class="Search__Results">
             <li v-for="(album, i) in albums" :key="i">
                 {{ album.title }} by {{ album.artist }}
             </li>

@@ -1,3 +1,12 @@
-h1 {
-    color: red;
-}
+@import 'modern-normalize/modern-normalize.css';
+
+@import "1. Foundation/Colors.scss";
+@import "1. Foundation/Effects.scss";
+@import "1. Foundation/Fonts.scss";
+@import "1. Foundation/Grid.scss";
+
+@import "2. Base/Html.scss";
+@import "2. Base/Typography.scss";
+
+@import "3. Components/Molecules/Search.scss";
+@import "3. Components/Organisms/Header.scss";
