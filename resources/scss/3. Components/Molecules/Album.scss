@@ -39,15 +39,21 @@
 
     .Album__Title {
         @include serif;
+        color: map.get($colors, "red-0");
         font-size: 3rem;
         line-height: 4rem;
-        color: map.get($colors, "red-0");
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .Album__Artist {
         @include sans-serif;
+        color: map.get($colors, "red-0");
         font-size: 1.75rem;
         line-height: 2.5rem;
-        color: map.get($colors, "red-0");
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }

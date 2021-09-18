@@ -9,7 +9,7 @@
     @include main-grid;
     grid-auto-rows: min-content;
     height: calc(100vh - 10rem);
-    margin: 2rem 7rem;
+    padding: 2rem 0;
     row-gap: 2rem;
 
     .Album {
