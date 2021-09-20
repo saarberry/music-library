@@ -1,147 +1,33 @@
 <template>
     <section class="Library">
         <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
-        />
-        <Album
-            artist="Tyler, the Creator"
-            title="IGOR"
-            cover="https://upload.wikimedia.org/wikipedia/en/5/51/Igor_-_Tyler%2C_the_Creator.jpg"
+            v-for="album in albums"
+            :key="album.id"
+            :artist="album.artist"
+            :title="album.title"
+            :cover="`storage/${album.image}`"
         />
     </section>
 </template>
 
 <script>
+import { ref } from "vue";
+import axios from "axios";
 import Album from "@/components/molecules/Album.vue";
 
 export default {
     components: { Album },
+    setup() {
+        let albums = ref([]);
+        async function loadAlbums() {
+            let response = await axios.get("/api/albums");
+            let result = response.data;
+            albums.value = result.data;
+        }
+
+        loadAlbums();
+
+        return { albums };
+    },
 };
 </script>
