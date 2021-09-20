@@ -20,3 +20,4 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::apiResource('albums', AlbumController::class);
+Route::post('albums/search', [AlbumController::class, 'search'])->name('albums.search');

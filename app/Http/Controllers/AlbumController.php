@@ -6,17 +6,28 @@ use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Services\LastFmApi;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class AlbumController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Index all resources.
+     *
+     * @return ResourceCollection
+     */
+    public function index(): ResourceCollection
+    {
+        return AlbumResource::collection(Album::all());
+    }
+
+    /**
+     * Search for matches of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Services\LastFmApi   $lastfm
-     * @return \Illuminate\Http\Response
+     * @return ResourceCollection
      */
-    public function index(Request $request, LastFmApi $lastfm)
+    public function search(Request $request, LastFmApi $lastfm): ResourceCollection
     {
         $query = $request->input('query');
         $albums = Album::where('title', 'like', "%{$query}%")->get();
