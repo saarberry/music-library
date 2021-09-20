@@ -1,12 +1,13 @@
 <template>
-    <h1>Music Library</h1>
-    <search />
+    <Header />
+    <Library />
 </template>
 
 <script>
-import Search from "./Search.vue";
+import Header from "@/components/organisms/Header.vue";
+import Library from "@/components/organisms/Library.vue";
 
 export default {
-    components: { Search },
+    components: { Header, Library },
 };
 </script>

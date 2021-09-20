@@ -40,7 +40,7 @@ class LastfmSearchCommand extends Command
     public function handle(LastFmApi $lastfm)
     {
         $albums = $lastfm->searchAlbums($this->argument('query'));
-        $albums = $albums->map(fn ($album) => ['name' => $album['name'], 'artist' => $album['artist']]);
+        $albums = $albums->map(fn ($album) => ['title' => $album['title'], 'artist' => $album['artist']]);
 
         $this->table(
             ["Name", "Artist"],

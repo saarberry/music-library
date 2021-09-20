@@ -14,13 +14,31 @@ class AlbumControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function test_that_index_can_search_for_albums_in_the_database()
+    public function test_that_the_index_endpoint_lists_all_albums_from_the_database()
+    {
+        // If I have 3 albums..
+        $albums = Album::factory()->count(3)->create();
+
+        // And I send a request to retrieve them all..
+        $response = $this->get('api/albums');
+
+        // I expect all 3 of them as a result.
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+
+        foreach ($albums as $album) {
+            $response->assertJsonFragment(['title' => $album->title]);
+        }
+    }
+
+    public function test_that_the_search_endpoint_can_search_for_albums_in_the_database()
     {
         // If I have an album with the title of test..
         Album::factory()->create(['title' => 'test']);
 
         // And I send a request to the API to search for it..
-        $response = $this->get('api/albums?query=test');
+        $response = $this->post('api/albums/search', ['query' => 'test']);
 
         // I expect to receive it as only result.
         $response
@@ -29,7 +47,7 @@ class AlbumControllerTest extends TestCase
             ->assertJsonFragment(['title' => 'test']);
     }
 
-    public function test_that_index_will_search_lastfm_if_theres_no_matches_in_the_database()
+    public function test_that_the_search_endpoint_will_search_lastfm_if_theres_no_matches_in_the_database()
     {
         Http::fake([
             'ws.audioscrobbler.com/*' => Http::response(
@@ -39,7 +57,7 @@ class AlbumControllerTest extends TestCase
 
         // If I have no stored albums, but I send a request to
         // the API to search for stuff anyway..
-        $response = $this->get('api/albums?query=test');
+        $response = $this->post('api/albums/search', ['query' => 'test']);
 
         // I expect the controller to call the lastfm api at some point.
         Http::assertSent(function (Request $request) {

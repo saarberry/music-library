@@ -1,3 +1,3 @@
 it('works', () => {
-    cy.visit('/').contains('Music Library');
+    cy.visit('/').contains('Saarberry');
 });
