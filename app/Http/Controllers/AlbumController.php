@@ -17,7 +17,7 @@ class AlbumController extends Controller
      */
     public function index(): ResourceCollection
     {
-        return AlbumResource::collection(Album::all());
+        return AlbumResource::collection(Album::orderBy('artist', 'asc')->get());
     }
 
     /**
