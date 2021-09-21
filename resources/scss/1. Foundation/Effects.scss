@@ -13,6 +13,6 @@
 
 @mixin transition-move($props: "*") {
     transition-property: $props;
-    transition-duration: .5s;
+    transition-duration: 5s;
     transition-timing-function: ease-in-out;
 }
