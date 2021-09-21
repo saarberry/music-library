@@ -30,11 +30,16 @@
         backdrop-filter: blur(4px);
         background: rgba(13, 13, 13, 0.25);
         bottom: 0;
+        display: none;
         left: 0;
         mix-blend-mode: normal;
         padding: 3rem;
         position: absolute;
         right: 0;
+
+        @include md {
+            display: block;
+        }
     }
 
     .Album__Title {

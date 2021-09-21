@@ -23,8 +23,8 @@ class AlbumController extends Controller
     /**
      * Search for matches of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Services\LastFmApi   $lastfm
+     * @param Request $request
+     * @param LastFmApi $lastfm
      * @return ResourceCollection
      */
     public function search(Request $request, LastFmApi $lastfm): ResourceCollection

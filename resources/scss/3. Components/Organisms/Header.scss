@@ -11,10 +11,27 @@
     height: 10rem;
 
     h1 {
-        grid-column: 1 / 3;
+        display: none;
+
+        @include md {
+            display: block;
+            grid-column: 1 / 3;
+        }
     }
 
     .Search {
-        grid-column: 3 / 11;
+        grid-column: 1 / 5;
+
+        @include md {
+            grid-column: 3 / 7;
+        }
+
+        @include xl {
+            grid-column: 3 / 9;
+        }
+
+        @include xxl {
+            grid-column: 3 / 11;
+        }
     }
 }

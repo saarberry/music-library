@@ -9,8 +9,16 @@
     @include main-grid;
     grid-auto-rows: min-content;
     height: calc(100vh - 10rem);
-    padding: 2rem 0;
-    row-gap: 2rem;
+    padding: 0;
+    row-gap: 1rem;
+
+    @include md {
+        padding: 2rem 0;
+    }
+
+    @include lg {
+        row-gap: 2rem;
+    }
 
     .Album {
         grid-column-end: span 2;
