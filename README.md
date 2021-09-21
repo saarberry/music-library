@@ -29,6 +29,11 @@ Music Library is a place for me to store music that I physically own, because I 
 
 **Step 9** - Go to http://music.lcl/ in your browser to see this cool website!
 
+## Adding albums
+Of course the whole point of this app is to have albums on display, which are then searchable to see if you already own them or not. To fill the library, make sure you fill out the LastFM API key and secret values in the `.env`. When those are set, you can run the artisan command `artisan lastfm:add-album "Some album title"` to search Last FM for an album. From the result set you can choose which of the albums you want to add, and the app will download the cover art and add the entry to the database.
+
+It's a little tedious for now, but it works!
+
 ## Developing JS / CSS
 **Step 0** - Make sure you've completed step 5 of the getting started section.
 
