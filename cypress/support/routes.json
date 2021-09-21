@@ -218,6 +218,15 @@
       "DELETE"
     ]
   },
+  "albums.search": {
+    "name": "albums.search",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\AlbumController@search",
+    "uri": "api/albums/search",
+    "method": [
+      "POST"
+    ]
+  },
   "": {
     "name": null,
     "domain": null,
