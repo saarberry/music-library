@@ -15,4 +15,17 @@
     .Album {
         grid-column-end: span 2;
     }
+
+    .album-list-enter-active,
+    .album-list-leave-active,
+    .album-list-move {
+        @include transition-move(all);
+    }
+    .album-list-leave-active {
+        position: absolute;
+    }
+    .album-list-enter-from,
+    .album-list-leave-to {
+        opacity: 0;
+    }
 }
