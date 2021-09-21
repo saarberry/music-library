@@ -1,14 +1,14 @@
 <template>
     <section class="Library">
-        <transition-group name="album-list">
-            <Album
-                v-for="album in filteredAlbums"
-                :key="album.id"
-                :artist="album.artist"
-                :title="album.title"
-                :cover="`storage/${album.image}`"
-            />
-        </transition-group>
+        <!-- <transition-group name="album-list"> -->
+        <Album
+            v-for="album in filteredAlbums"
+            :key="album.id"
+            :artist="album.artist"
+            :title="album.title"
+            :cover="`storage/${album.image}`"
+        />
+        <!-- </transition-group> -->
     </section>
 </template>
 

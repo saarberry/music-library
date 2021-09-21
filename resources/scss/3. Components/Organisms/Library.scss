@@ -8,8 +8,8 @@
 .Library {
     @include main-grid;
     grid-auto-rows: min-content;
-    height: calc(100vh - 10rem);
     padding: 0;
+    position: relative;
     row-gap: 1rem;
 
     @include md {
@@ -35,5 +35,9 @@
     .album-list-enter-from,
     .album-list-leave-to {
         opacity: 0;
+    }
+    .album-list-enter-to,
+    .album-list-leave-from {
+        opacity: 1;
     }
 }
