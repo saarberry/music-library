@@ -1,62 +1,56 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Music Library
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Music Library is a place for me to store music that I physically own, because I keep forgetting.
 
-## About Laravel
+## Requirements
+- Git
+- [Docker](https://www.docker.com/products/docker-desktop)
+- A browser
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Getting started
+**Step 1** - Navigate your terminal to wherever you keep your projects. Run `git clone git@github.com:saarberry/music-library.git`, which will create a `music-library` directory for you in the current directory. Run `cd music-library` to enter the directory for all the next steps.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Step 2** - Copy the `docker/env.example` file in the root directory and call it `docker/.env`. It contains the credentials for MySQL, and configuration for nginx. Make sure to update these to your preferences. Note that the nginx host will be the domain where you can visit the app later.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Step 3** - Build the project through docker with the `docker-compose up -d --build` command. Building is required the first time, but after that you can skip the `--build` flag to bring the containers back up. Note that the `-d` flag stands for daemon, you _can_ skip it, but then all containers will run in your CLI as a process until you ctrl+c to stop it. Can be helpful if you want to see the logs, but you can also view them in the docker dashboard.
 
-## Learning Laravel
+**Step 4** - Install the PHP dependencies using `docker-compose run --rm composer install`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Step 5** - Install the JS dependencies using `docker-compose run --rm npm install`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Step 6** - Copy the `.env.example` file in the root directory and call it `.env`. We don't need most of the settings because this application doesn't do a whole lot for now, but you still need the file to exist. Most settings are already set to defaults that docker expects, but you can change the following if you feel like it:
+- `APP_DEBUG` - Set this to false if you don't want to see the cool stack trace if something goes wrong.
+- `DEBUGBAR_ENABLED` - If you want to see that nifty debugbar on every page, set this to `true`.
+- `DB_*` - The database settings are mostly configured to connect with the docker mysql container, you only have to set the password. Change the other settings if you want to connect to a local database or something.
 
-## Laravel Sponsors
+**Step 7** - Generate an application key using `docker-compose run --rm artisan key:generate`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+**Step 8** - Create and fill your database with `docker-compose run --rm artisan migrate --seed`.
 
-### Premium Partners
+**Step 9** - Go to http://music.lcl/ in your browser to see this cool website!
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+## Adding albums
+Of course the whole point of this app is to have albums on display, which are then searchable to see if you already own them or not. To fill the library, make sure you fill out the LastFM API key and secret values in the `.env`. When those are set, you can run the artisan command `artisan lastfm:add-album "Some album title"` to search Last FM for an album. From the result set you can choose which of the albums you want to add, and the app will download the cover art and add the entry to the database.
 
-## Contributing
+It's a little tedious for now, but it works!
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Developing JS / CSS
+**Step 0** - Make sure you've completed step 5 of the getting started section.
 
-## Code of Conduct
+**Step 1** - Run `docker-compose run --rm npm run watch` to monitor files that should be built, when you change them they will automatically create new CSS and JS files in the `public` directory.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Step 2** - You can find all the SCSS, JS and views in the `resources` folder. Modify whatever you like to your hearts' content.
 
-## Security Vulnerabilities
+## Testing
+**Step 1** - Tests are run through the default artisan test suite, you can run it via `docker-compose run --rm artisan test`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Troubleshooting
+### Windows
+Dnsmasq doesn't work on Windows because Windows. If you want to use a cool URL rather than `127.0.0.1`, edit your hosts file.
 
-## License
+### Laravel Valet
+If you usually run your projects through laravel valet, then the docker containers will conflict with the `nginx` and `dnsmasq` services. To fix the nginx conflict, simply stop the valet services with `valet stop`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Valet sadly doesn't run dnsmasq as a process, but relies on homebrew to keep that running. If you run `brew services list` then you should see dnsmasq as an entry, and you can stop it via `brew services stop dnsmasq` (this might need sudo).
+
+Note that the valet services are listed to be started on boot, so whenever you restart your computer, all the above _might_ be running again. You can also manually start the services again with `valet start` for nginx, and `brew services start dnsmasq` to manually start dnsmasq again (valet start might do this for you, I haven't checked).

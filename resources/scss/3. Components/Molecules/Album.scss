@@ -1,0 +1,64 @@
+//                                                                 ,--.
+// ,--.   ,--.       ,--.                     ,--.                /  /       ,---.  ,--.,--.
+// |   `.'   | ,---. |  | ,---.  ,---.,--.,--.|  | ,---.         /  /       /  O  \ |  ||  |-. ,--.,--.,--,--,--.
+// |  |'.'|  || .-. ||  || .-. :| .--'|  ||  ||  || .-. :       /  /       |  .-.  ||  || .-. '|  ||  ||        |
+// |  |   |  |' '-' '|  |\   --.\ `--.'  ''  '|  |\   --.      /  /        |  | |  ||  || `-' |'  ''  '|  |  |  |
+// `--'   `--' `---' `--' `----' `---' `----' `--' `----'     /  /         `--' `--'`--' `---'  `----' `--`--`--'
+//                                                           `--'
+@use "sass:map";
+
+.Album {
+    border-radius: .5rem;
+    overflow: hidden;
+    position: relative;
+
+    &:before {
+        content: ' ';
+        display: block;
+        width: 100%;
+        padding-top: 100%;
+    }
+
+    & > img {
+        bottom: 0;
+        height: 100%;
+        position: absolute;
+        width: 100%;
+    }
+
+    .Album__Details {
+        backdrop-filter: blur(4px);
+        background: rgba(13, 13, 13, 0.25);
+        bottom: 0;
+        display: none;
+        left: 0;
+        mix-blend-mode: normal;
+        padding: 3rem;
+        position: absolute;
+        right: 0;
+
+        @include md {
+            display: block;
+        }
+    }
+
+    .Album__Title {
+        @include serif;
+        color: map.get($colors, "red-0");
+        font-size: 3rem;
+        line-height: 4rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .Album__Artist {
+        @include sans-serif;
+        color: map.get($colors, "red-0");
+        font-size: 1.75rem;
+        line-height: 2.5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

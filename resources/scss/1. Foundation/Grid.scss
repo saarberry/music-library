@@ -1,0 +1,33 @@
+//                                                                                   ,--.
+// ,------.                         ,--.          ,--.  ,--.                        /  /      ,----.          ,--.   ,--.
+// |  .---',---. ,--.,--.,--,--,  ,-|  | ,--,--.,-'  '-.`--' ,---. ,--,--,         /  /      '  .-./   ,--.--.`--' ,-|  |
+// |  `--,| .-. ||  ||  ||      \' .-. |' ,-.  |'-.  .-',--.| .-. ||      \       /  /       |  | .---.|  .--',--.' .-. |
+// |  |`  ' '-' ''  ''  '|  ||  |\ `-' |\ '-'  |  |  |  |  |' '-' '|  ||  |      /  /        '  '--'  ||  |   |  |\ `-' |
+// `--'    `---'  `----' `--''--' `---'  `--`--'  `--'  `--' `---' `--''--'     /  /          `------' `--'   `--' `---'
+//                                                                             `--'
+@mixin main-grid {
+    column-gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0 2rem;
+
+    @include md {
+        grid-template-columns: repeat(6, 1fr);
+        margin: 0 4rem;
+    }
+
+    @include lg {
+        column-gap: 2rem;
+        grid-template-columns: repeat(8, 1fr);
+        margin: 0 6rem;
+    }
+
+    @include xl {
+        grid-template-columns: repeat(10, 1fr);
+        margin: 0 7rem;
+    }
+
+    @include xxl {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}

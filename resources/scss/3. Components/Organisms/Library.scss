@@ -1,0 +1,39 @@
+//                                                                       ,--.
+//  ,-----.                               ,--.                          /  /     ,--.   ,--.,--.
+// '  .-.  ',--.--. ,---.  ,--,--.,--,--, `--' ,---. ,--,--,--.        /  /      |  |   `--'|  |-. ,--.--. ,--,--.,--.--.,--. ,--.
+// |  | |  ||  .--'| .-. |' ,-.  ||      \,--.(  .-' |        |       /  /       |  |   ,--.| .-. '|  .--'' ,-.  ||  .--' \  '  /
+// '  '-'  '|  |   ' '-' '\ '-'  ||  ||  ||  |.-'  `)|  |  |  |      /  /        |  '--.|  || `-' ||  |   \ '-'  ||  |     \   '
+//  `-----' `--'   .`-  /  `--`--'`--''--'`--'`----' `--`--`--'     /  /         `-----'`--' `---' `--'    `--`--'`--'   .-'  /
+//                 `---'                                           `--'                                                  `---'
+.Library {
+    @include main-grid;
+    grid-auto-rows: min-content;
+    height: calc(100vh - 10rem);
+    padding: 0;
+    row-gap: 1rem;
+
+    @include md {
+        padding: 2rem 0;
+    }
+
+    @include lg {
+        row-gap: 2rem;
+    }
+
+    .Album {
+        grid-column-end: span 2;
+    }
+
+    .album-list-enter-active,
+    .album-list-leave-active,
+    .album-list-move {
+        @include transition-move(all);
+    }
+    .album-list-leave-active {
+        position: absolute;
+    }
+    .album-list-enter-from,
+    .album-list-leave-to {
+        opacity: 0;
+    }
+}
