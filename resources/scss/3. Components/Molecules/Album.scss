@@ -9,6 +9,7 @@
 
 .Album {
     border-radius: .5rem;
+    box-shadow: 0px 0px 5px rgba(map.get($colors, 'neutral-90'), 0.15);
     overflow: hidden;
     position: relative;
 
@@ -28,7 +29,7 @@
 
     .Album__Details {
         backdrop-filter: blur(4px);
-        background: rgba(13, 13, 13, 0.25);
+        background: rgba(map.get($colors, 'neutral-90'), 0.25);
         bottom: 0;
         display: none;
         left: 0;
@@ -44,7 +45,7 @@
 
     .Album__Title {
         @include serif;
-        color: map.get($colors, "red-0");
+        color: map.get($colors, "neutral-0");
         font-size: 3rem;
         line-height: 4rem;
         overflow: hidden;
@@ -54,7 +55,7 @@
 
     .Album__Artist {
         @include sans-serif;
-        color: map.get($colors, "red-0");
+        color: map.get($colors, "neutral-0");
         font-size: 1.75rem;
         line-height: 2.5rem;
         overflow: hidden;
