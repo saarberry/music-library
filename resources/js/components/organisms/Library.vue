@@ -1,7 +1,7 @@
 <template>
     <section class="Library">
         <transition-group
-            name="album-list"
+            :name="shouldAnimate ? 'album-list' : 'nop'"
             @before-leave="forceSize"
             @after-leave="revertSize"
         >
@@ -12,6 +12,12 @@
                 :title="album.title"
                 :cover="`storage/${album.image}`"
             />
+            <span class="Hint" v-if="shouldDisplayHint">
+                This search is meant to animate, but since fading 500+ elements
+                is heavy on the browser, I figured I'd save you the processing
+                power by displaying this message instead. Go ahead though, type
+                something!
+            </span>
         </transition-group>
     </section>
 </template>
@@ -36,14 +42,25 @@ export default {
         let query = ref("");
         EventBus.on(
             EVENTS.SEARCH_INPUT,
-            debounce((input) => (query.value = input), 150)
+            debounce((input) => (query.value = input), 100)
         );
 
+        let focus = ref(false);
+        EventBus.on(EVENTS.SEARCH_FOCUS, () => (focus.value = true));
+        EventBus.on(EVENTS.SEARCH_BLUR, () => (focus.value = false));
+
         let filteredAlbums = computed(() => {
-            if (query.value.length == 0) return albums.value;
+            if (query.value.length == 0) {
+                return focus.value ? [] : albums.value;
+            }
 
             return fuse.search(query.value).map((result) => result.item);
         });
+
+        let shouldDisplayHint = computed(
+            () => query.value.length == 0 && focus.value
+        );
+        let shouldAnimate = computed(() => query.value.length > 0);
 
         async function loadAlbums() {
             let response = await axios.get("/api/albums");
@@ -63,7 +80,14 @@ export default {
             el.style.height = null;
         }
 
-        return { filteredAlbums, forceSize, revertSize };
+        return {
+            query,
+            filteredAlbums,
+            forceSize,
+            revertSize,
+            shouldDisplayHint,
+            shouldAnimate,
+        };
     },
 };
 </script>
