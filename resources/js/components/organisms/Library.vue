@@ -1,14 +1,18 @@
 <template>
     <section class="Library">
-        <!-- <transition-group name="album-list"> -->
-        <Album
-            v-for="album in filteredAlbums"
-            :key="album.id"
-            :artist="album.artist"
-            :title="album.title"
-            :cover="`storage/${album.image}`"
-        />
-        <!-- </transition-group> -->
+        <transition-group
+            name="album-list"
+            @before-leave="forceSize"
+            @after-leave="revertSize"
+        >
+            <Album
+                v-for="album in filteredAlbums"
+                :key="album.id"
+                :artist="album.artist"
+                :title="album.title"
+                :cover="`storage/${album.image}`"
+            />
+        </transition-group>
     </section>
 </template>
 
@@ -49,7 +53,17 @@ export default {
         }
         loadAlbums();
 
-        return { filteredAlbums };
+        function forceSize(el) {
+            el.style.width = `${el.offsetWidth}px`;
+            el.style.height = `${el.offsetHeight}px`;
+        }
+
+        function revertSize(el) {
+            el.style.width = null;
+            el.style.height = null;
+        }
+
+        return { filteredAlbums, forceSize, revertSize };
     },
 };
 </script>
